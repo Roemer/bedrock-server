@@ -1,66 +1,45 @@
 # Minecraft Bedrock Server
-Run a bedrock server in a Docker container.
-
-## Introduction
-This Docker image will download the Bedrock Server app and set it up, along with its dependencies.
+Minecraft Bedrock edition for Docker ( also Synology )
 
 ## Usage
-### New installation
+
+#### Prerequisites
+1. Working docker installation
+
+### For Synology
+1. From the Docker application, navigate to Registry, and find "glemsom/bedrock-server" image (earch for glemsom)
+2. Right-click, and select Download this image
+3. Select the desired version from tags (NOTE: Latest is development tag, and might break at random times)
+4. Navigate to Image, and Launch an instance of "glemsom/bedrock-server"
+5. Choose "Advanced Settings"
+6. OPTIONAL: Select "Enable auto-restart"
+7. Under the Volume tab, choose "Add Folder" - and find (or create) a folder for storing Bedrock configuration and world files. Mount the folder as `/bedrock-server/data`
+8. Under Port Settings, change "Local Port" from "Auto" to 19132
+9. OPTIONAL: Console access to Bedrock
+Navigate to Docker -> Container -> Details -> Terminal
+
+
+### For regular docker
 1. Prepare the persistent volumes:
-    1. Create a volume for the configuration:<br/>
-        `docker volume create --name "bedrock-config"`
-    2. Create a volume for the worlds:<br/>
-        `docker volume create --name "bedrock-worlds"`
+    1. Create a volume for the Bedrock:<br/>
+        `docker volume create --name "bedrock-data"`
 2. Create the Docker container:
     ```bash
-    docker create --name=minecraft\
-        -v "bedrock-config:/bedrock-server/config"\
-        -v "bedrock-worlds:/bedrock-server/worlds"\
-        -p 19132:19132/udp\
-        --restart=unless-stopped\
-        roemer/bedrock-server
+    docker create --name=minecraft \
+        -v "bedrock-data:/bedrock-server/data" \
+        -p 19132:19132/udp \
+        --restart=unless-stopped \
+        glemsom/bedrock-server:latest
     ```
-3. Configure the default files in the `config` volume:
-    1. Configure the `server.properties` to your likings.
-    2. Configure the `whitelist.json` in case you have set `white-list=true` in the above step. Note: The `xuid` is optional and will automatically be added as soon as a matching player connects. Here's an example of a `whitelist.json` file:
-        ```json
-        [
-            {
-                "ignoresPlayerLimit": false,
-                "name": "MyPlayer"
-            },
-            {
-                "ignoresPlayerLimit": false,
-                "name": "AnotherPlayer",
-                "xuid": "274817248"
-            }
-        ]
-        ```
-    3. Configure the `permissions.json` and add the operators. This file consists of a list of `permissions` and `xuid`s. The `permissions` can be `member`, `visitor` or `operator`. The `xuid` can be copied from the `whitelist.json` as soon as the user connected once. An example could look like:
-        ```json
-        [
-            {
-                "permission": "operator",
-                "xuid": "274817248"
-            }
-        ]
-        ```
-3. Start the server:<br/>
-    `docker start minecraft`
-
-### Updating
-1. Stop the server<br/>
-    ```
-    docker attach minecraft
-    stop
-    ```
-2. Re-create the server with the new image and the same settings (either `manually` or with `portainer` or Synologys `clean`).<br/>
-    NOTE: When updating from 1.7, you need to use the new installation guide and put your `worlds` and `config` files into the newly created volumes or use appropriate volume mappings when creating the container. You also need to rename `ops.json` to `permissions.json`.
-3. Start the server
-    `docker start minecraft`
+    
+3. Start the server:
+    ```bash
+     docker run -v "bedrock:/bedrock-server/data" \
+     -p 19132:19132/udp glemsom/bedrock-server:latest`
 
 ## Commands
-There are various commands that can be used in the console. To access the console, you need to attach to the container with the following command:
+There are various commands that can be used in the console.
+To access the console, you need to attach to the container with the following command:
 ```
 docker attach <container-id>
 ```
