@@ -13,7 +13,7 @@ This Docker image will download the Bedrock Server app and set it up, along with
         `docker volume create --name "bedrock-worlds"`
 2. Create the Docker container:
     ```bash
-    docker create --name=minecraft\
+    docker create --name=minecraft -it\
         -v "bedrock-config:/bedrock-server/config"\
         -v "bedrock-worlds:/bedrock-server/worlds"\
         -p 19132:19132/udp\
@@ -22,7 +22,7 @@ This Docker image will download the Bedrock Server app and set it up, along with
     ```
 3. Prepare the config files
     1. Either start the server once and stop it
-    2. or copy the files from the original archive
+    2. or copy the files from the original archives
 3. Configure the default files in the `config` volume:
     1. Configure the `server.properties` to your likings.
     2. Configure the `whitelist.json` in case you have set `white-list=true` in the above step. Note: The `xuid` is optional and will automatically be added as soon as a matching player connects. Here's an example of a `whitelist.json` file:
@@ -78,7 +78,7 @@ Here are the commands:
 | save {`hold` or `resume` or `query`} | Used to make atomic backups while the server is running. See the backup section for more information. |
 | whitelist {`on` or `off` or `list` or `reload`} | `on` and `off` turns the whitelist on and off. Note that this does not change the value in the `server.properties` file!<br />`list` prints the current whitelist used by the server<br />`reload` makes the server reload the whitelist from the file.
 | whitelist {`add` or `remove`} {`name`} | Adds or removes a player from the whitelist file. The name parameter should be the Xbox Gamertag of the player you want to add or remove. You don't need to specify a XUID here, it will be resolved the first time the player connects. |
-| permissions {`list` or `reload`} | `list` prints the current used permissions list.<br />`reload` makes the server reload the operator list from the permissions file. |
+| permission {`list` or `reload`} | `list` prints the current used permissions list.<br />`reload` makes the server reload the operator list from the permissions file. |
 | op {`player name`} | Promote a player to `operator`. This will also persist in `permissions.json` if the player is authenticated to XBL. If `permissions.json` is missing it will be created. If the player is not connected to XBL, the player is promoted for the current server session and it will not be persisted on disk. Default server permission level will be assigned to the player after a server restart. |
 | deop {`player name`} | Demote a player to `member`. This will also persist in `permissions.json` if the player is authenticated to XBL. If `permissions.json` is missing it will be created. |
 | changesetting {`setting`} {`value`} | Changes a server setting without having to restart the server. Currently only two settings are supported to be changed, `allow-cheats` (`true` or `false`) and `difficulty` (0, `peaceful`, 1, `easy`, 2, `normal`, 3 or `hard`). They do not modify the value that's specified in `server.properties`. |
