@@ -1,5 +1,5 @@
 FROM ubuntu:18.04
-ARG BDS_Version=1.16.100.04
+ARG BDS_Version=1.17.2.01
 
 ENV VERSION=$BDS_Version
 
@@ -11,7 +11,7 @@ RUN apt-get update && \
 # Download and extract the bedrock server
 RUN if [ "$VERSION" = "latest" ] ; then \
         LATEST_VERSION=$( \
-            curl -v --silent  https://www.minecraft.net/en-us/download/server/bedrock/ 2>&1 | \
+            curl -v --silent  https://www.minecraft.net/en-us/download/server/bedrock 2>&1 | \
             grep -o 'https://minecraft.azureedge.net/bin-linux/[^"]*' | \
             sed 's#.*/bedrock-server-##' | sed 's/.zip//') && \
         export VERSION=$LATEST_VERSION && \
@@ -21,6 +21,9 @@ RUN if [ "$VERSION" = "latest" ] ; then \
     curl https://minecraft.azureedge.net/bin-linux/bedrock-server-${VERSION}.zip --output bedrock-server.zip && \
     unzip bedrock-server.zip -d bedrock-server && \
     rm bedrock-server.zip
+
+# Make main executable executable
+RUN chmod a+x /bedrock-server/bedrock_server
 
 # Create a separate folder for configurations move the original files there and create links for the files
 RUN mkdir /bedrock-server/config && \
